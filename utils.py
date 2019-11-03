@@ -3,18 +3,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from absl import flags
-# from dataset import deprocess_img
-
-import tensorflow as tf
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import numpy as np
-import imageio
 import glob
 
 from PIL import Image
 
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
+import imageio
 
 def tensor_to_image(tensor):
   """Convert tensor into PIL.Image
@@ -32,6 +28,7 @@ def tensor_to_image(tensor):
 
 
 def log_training_info(plot_img, losses, step, elapsed_time):
+  """Log training losses and plot image"""
   imshow(plot_img, title='Generated image')
   print('Steps: {}'.format(step))
   print('total loss: {:.4e}, '.format(losses['total_loss']),
@@ -64,7 +61,6 @@ def plot_history(history):
   plt.xlabel('Training step')
   plt.ylabel('loss')
   plt.legend()
-  # plt.ylim([0.5, 1])
   plt.show()
 
 
@@ -87,16 +83,5 @@ def create_gif():
 
 
 def clip_0_1(img):
+  """Keep pixel values between 0 and 1."""
   return tf.clip_by_value(img, clip_value_min=0.0, clip_value_max=1.0)
-
-
-def clip_0_255(img):
-  return tf.clip_by_value(img, clip_value_min=0.0, clip_value_max=255.0)
-
-
-def load_model():
-  pass
-
-
-def save_model():
-  pass

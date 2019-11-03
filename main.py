@@ -10,28 +10,21 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import time
 from absl import app
 from absl import flags
-from dataset import load_and_process_img
-from dataset import deprocess_img
-from model import NUM_CONTENT_LAYERS
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
 from model import NUM_STYLE_LAYERS
-from model import NORM_MEANS
 from model import neural_style
 from model import compute_losses
 from flags import define_flags
 from utils import log_training_info
 from utils import plot_history
 from utils import create_gif
-from utils import imshow
 from utils import clip_0_1
-from utils import clip_0_255
 from dataset import _load_img
-
-import tensorflow as tf
-import os
-import time
-import matplotlib.pyplot as plt
 
 
 def run(flags_obj):
@@ -58,7 +51,6 @@ def run(flags_obj):
                            beta_1=0.99,
                            epsilon=1e-1)
 
-  best_loss, best_img = float('inf'), None
   start_time = time.time()
   history = dict(total_losses=[], style_losses=[], content_losses=[], images=[])
 
@@ -76,14 +68,6 @@ def run(flags_obj):
 
     opt.apply_gradients([(grads, gen_img)])
     gen_img.assign(clip_0_1(gen_img))
-
-    # plot_img = gen_img.numpy()
-    # plot_img = deprocess_img(plot_img)
-    # history['images'].append(plot_img)
-
-    if total_loss < best_loss:
-      best_loss = total_loss
-      best_img = gen_img
 
     if step % flags_obj.display_interval == 0:
       plt.imshow(gen_img.numpy()[0])
@@ -104,7 +88,7 @@ def _compute_original_image_feature_representation(model):
 
   Args:
     model: The model that we are using.
-  
+
   Returns:
     Tuple of style and content representation of original image.
   """
@@ -118,12 +102,8 @@ def _compute_original_image_feature_representation(model):
   content_outputs = model(content_img)
 
   # Get the style and content feature representations from our model
-  style_reprs = [
-      style_layer for style_layer in style_outputs[:NUM_STYLE_LAYERS]
-  ]
-  content_reprs = [
-      content_layer for content_layer in content_outputs[NUM_STYLE_LAYERS:]
-  ]
+  style_reprs = style_outputs[:NUM_STYLE_LAYERS]
+  content_reprs = content_outputs[NUM_STYLE_LAYERS:]
 
   return style_reprs, content_reprs
 

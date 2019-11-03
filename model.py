@@ -17,7 +17,7 @@ STYLE_LAYERS = [
 NUM_STYLE_LAYERS = len(STYLE_LAYERS)
 NUM_CONTENT_LAYERS = len(CONTENT_LAYERS)
 STYLE_WEIGHT = 1e-2
-CONTENT_WEIGHT = 1e4  # TODO(): Flag로.
+CONTENT_WEIGHT = 1e4
 WEIGHT_PER_STYLE_LAYER = 1.0 / float(NUM_STYLE_LAYERS)
 WEIGHT_PER_CONTENT_LAYER = 1.0 / float(NUM_CONTENT_LAYERS)
 NORM_MEANS = np.array([103.939, 116.779, 123.68])  # VGG19 normalization mean.
@@ -50,13 +50,13 @@ def compute_losses(model, gen_image, org_style_reprs, org_content_reprs):
 
   Args:
     model: The model that will give us access to the intermediate layers
-    gen_image: Image we are generating. This is what we are updating with our 
+    gen_image: Image we are generating. This is what we are updating with our
       optimization process. We apply the gradients the loss wrt this image.
     org_style_reprs: Precomputed gram metrices corresponding to the defined
       style layers of interest.
-    org_content_reprs: Precomputed output from defined content layers 
+    org_content_reprs: Precomputed output from defined content layers
         of interest.
-  
+
   Returns:
     Dictionary of {'total_loss', 'style_loss', 'content_loss'}
   """
@@ -91,14 +91,14 @@ def compute_losses(model, gen_image, org_style_reprs, org_content_reprs):
 
 
 def compute_content_loss(org_content_repr, gen_content_repr):
-  """Compute content loss by calculating Euclidian distance between 
-     intermediate content representation of original image and 
+  """Compute content loss by calculating Euclidian distance between
+     intermediate content representation of original image and
      image that is generated.
 
   Args:
-    org_content_repr: Output of intermediate feature activation when 
+    org_content_repr: Output of intermediate feature activation when
       the input was original content image.
-    gen_content_repr: Output of intermediate feature activation when 
+    gen_content_repr: Output of intermediate feature activation when
       the input was image that is generated.
 
   Returns:
@@ -112,11 +112,11 @@ def compute_style_loss(org_style_repr, gen_style_repr):
      generated image
 
   Args:
-    org_style_repr: Tensor shape of (h, w, c). 
+    org_style_repr: Tensor shape of (h, w, c).
       Style representation of original image.
-    gen_style_repr: Tensor shape of (h, w, c). 
+    gen_style_repr: Tensor shape of (h, w, c).
       Style representation of generated image.
-  
+
   Returns:
     Style loss.
   """
@@ -129,7 +129,7 @@ def compute_style_loss(org_style_repr, gen_style_repr):
 
 def _gram_matrix(input_tensor):
   """Calculate gram matrix which is (channel, channel) shape.
-  
+
   Args:
     input_tensor: tensor that is calculated.
 
